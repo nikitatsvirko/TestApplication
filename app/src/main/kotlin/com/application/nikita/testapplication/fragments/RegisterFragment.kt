@@ -10,10 +10,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import com.application.nikita.testapplication.R
-import com.beust.klaxon.JsonObject
-import com.beust.klaxon.json
 import khttp.post
-import kotlin.concurrent.thread
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 class RegisterFragment : Fragment() {
 
@@ -49,15 +48,18 @@ class RegisterFragment : Fragment() {
     }
 
     private fun  registerUser(login: String, password: String) {
-        Log.d("Register Fragment", "Login is $login and password is $password")
-        val postParams = mapOf("login" to login, "password" to password)
-        var status: Int = 0
-        thread {
+        doAsync {
+            val postParams = mapOf("login" to login, "password" to password)
             val request = post("http://213.184.248.43:9099/api/account/signup", json = postParams)
-            status = request.statusCode
+            val status = request.statusCode
+            uiThread {
+                Log.d("FRAGMENT!!!!!", "Status $status")
+                when(status) {
+                    200 -> Toast.makeText(context, R.string.confirm_text, Toast.LENGTH_SHORT).show()
+                    400 -> Toast.makeText(context, R.string.denied_text, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
-        Toast.makeText(context, R.string.confirm_text, Toast.LENGTH_SHORT).show()
-        /*Toast.makeText(context, R.string.denied_text, Toast.LENGTH_SHORT).show()*/
     }
 
     private fun areFieldsCorrect(login: String, password: String): Boolean =
