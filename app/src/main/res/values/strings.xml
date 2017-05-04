@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Test Application</string>
+    <string name="action_settings">Settings</string>
+    <string name="login_button_text">Log In</string>
+    <string name="login_editTextView_text">Login</string>
+    <string name="password_editTxtView_text">Password</string>
+    <string name="repeat_password_editTxtView_text">Repeat Password</string>
+</resources>

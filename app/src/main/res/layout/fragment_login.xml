@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context="com.application.nikita.testapplication.fragments.LoginFragment"
+    tools:showIn="@layout/activity_start">
+
+
+    <EditText
+        android:id="@+id/login_editTxtView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/margin"
+        android:layout_marginEnd="@dimen/start_end_margin"
+        android:layout_marginStart="@dimen/start_end_margin"
+        android:hint="@string/login_editTextView_text"
+        android:inputType="text"
+        android:maxLines="1"/>
+
+    <EditText
+        android:id="@+id/password_editTxtView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/margin"
+        android:layout_marginEnd="@dimen/start_end_margin"
+        android:layout_marginStart="@dimen/start_end_margin"
+        android:layout_marginTop="@dimen/margin"
+        android:hint="@string/password_editTxtView_text"
+        android:inputType="textPassword"
+        android:maxLines="1"/>
+
+    <Button
+        android:id="@+id/login_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin"
+        android:layout_marginEnd="@dimen/start_end_margin"
+        android:layout_marginStart="@dimen/start_end_margin"
+        android:layout_marginTop="@dimen/margin"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:text="@string/login_button_text"
+        android:textColor="@android:color/white"/>
+
+</LinearLayout>
