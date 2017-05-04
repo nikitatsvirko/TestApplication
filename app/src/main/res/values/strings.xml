@@ -5,4 +5,5 @@
     <string name="login_editTextView_text">Login</string>
     <string name="password_editTxtView_text">Password</string>
     <string name="repeat_password_editTxtView_text">Repeat Password</string>
+    <string name="registration_warning_message">Login size must be between 4 and 32 and conatain only([a–z0-9_-]+), and password size must be between 8 and 500</string>
 </resources>
