@@ -2,8 +2,6 @@ package com.application.nikita.testapplication.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,17 +10,17 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import com.application.nikita.testapplication.R
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.json
 import khttp.post
 import kotlin.concurrent.thread
 
-class RegisterFragment : Fragment(), TextWatcher {
+class RegisterFragment : Fragment() {
 
     private var loginTextView: EditText? = null
     private var passwordTextView: EditText? = null
     private var repeatPasswordTextView: EditText? = null
     private var registerButton: Button? = null
-    private var isIdentical = false
-    private var _ignore = false
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,14 +38,12 @@ class RegisterFragment : Fragment(), TextWatcher {
         repeatPasswordTextView = getView()!!.findViewById(R.id.repeat_password_editTxtView) as EditText
         registerButton = getView()!!.findViewById(R.id.register_button) as Button
 
-        loginTextView?.addTextChangedListener(this)
-        passwordTextView?.addTextChangedListener(this)
-        repeatPasswordTextView?.addTextChangedListener(this)
-
         registerButton?.setOnClickListener {
-            if (isIdentical) {
+            if (checkAllFields()) {
                registerUser(loginTextView?.text.toString().trim(),
                        repeatPasswordTextView?.text.toString().trim())
+            } else {
+                Toast.makeText(context, R.string.registration_warning_message, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -55,49 +51,24 @@ class RegisterFragment : Fragment(), TextWatcher {
     private fun  registerUser(login: String, password: String) {
         Log.d("Register Fragment", "Login is $login and password is $password")
         val postParams = mapOf("login" to login, "password" to password)
+        var status: Int = 0
         thread {
             val request = post("http://213.184.248.43:9099/api/account/signup", json = postParams)
-            Log.d("Register Fragment", "Request is ${request.text}")
+            status = request.statusCode
         }
+        Toast.makeText(context, R.string.confirm_text, Toast.LENGTH_SHORT).show()
+        /*Toast.makeText(context, R.string.denied_text, Toast.LENGTH_SHORT).show()*/
     }
 
-    private fun checkFields(login: String, password: String) {
-        if ((login.length < 4 || login.length > 32) && !login.contains("[a-z0-9_-]+")
+    private fun areFieldsCorrect(login: String, password: String): Boolean =
+            !((login.length < 4 || login.length > 32) && !login.contains("[a-z0-9_-]+")
                 || (password.length < 8 || password.length > 500))
-            Toast.makeText(context, getString(R.string.registration_warning_message), Toast.LENGTH_LONG).show()
-    }
 
-    private fun comparePasswords(firstPassword: String, secondPassword: String): Boolean {
-        when(secondPassword == firstPassword) {
-            true -> {
-                return true
-            }
-            false -> {
-                return false
-            }
-        }
-    }
+    private fun comparePasswords(firstPassword: String, secondPassword: String): Boolean =
+            secondPassword == firstPassword
 
-    override fun afterTextChanged(s: Editable?) {
-        if(_ignore)
-            return
+    private fun checkAllFields(): Boolean =
+        areFieldsCorrect(loginTextView?.text.toString(), repeatPasswordTextView?.text.toString())
+                && comparePasswords(passwordTextView?.text.toString(), repeatPasswordTextView?.text.toString())
 
-        _ignore = true
-        val loginText = loginTextView?.text.toString()
-        val passwordText = passwordTextView?.text.toString()
-        val repPasswordText = repeatPasswordTextView?.text.toString()
-
-        checkFields(loginText, passwordText)
-
-        isIdentical = comparePasswords(passwordText, repPasswordText)
-        _ignore = false
-    }
-
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-    }
-
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-    }
 }
