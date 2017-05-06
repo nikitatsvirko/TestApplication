@@ -4,21 +4,19 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 
-class SessionManager {
+class SessionManager(context: Context) {
 
-    var sharedPrefs: SharedPreferences = null!!
+    var sharedPrefs: SharedPreferences? = null
     var editor: Editor
-    var _context: Context
-
-    val PRIVATE_MODE: Int = 0
+    var _context: Context = context
 
     private val PREF_NAME: String = "ApplicationUserLogin"
     private val KEY_IS_LOGGED_IN: String = "isLoggedIn"
+    val PRIVATE_MODE: Int = 0
 
-    fun SessionManager(context: Context) {
-        this._context = context
+    init {
         sharedPrefs = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE)
-        editor = sharedPrefs.edit()
+        editor = sharedPrefs?.edit() as Editor
     }
 
     fun setLogin(isLoggedIn: Boolean) {
@@ -26,5 +24,5 @@ class SessionManager {
         editor.commit()
     }
 
-    fun isLoggedIn(): Boolean = sharedPrefs.getBoolean(KEY_IS_LOGGED_IN, false)
+    fun isLoggedIn(): Boolean = sharedPrefs?.getBoolean(KEY_IS_LOGGED_IN, false)!!
 }

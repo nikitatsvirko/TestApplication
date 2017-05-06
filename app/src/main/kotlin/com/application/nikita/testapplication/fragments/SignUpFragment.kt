@@ -14,7 +14,7 @@ import khttp.post
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
-class RegisterFragment : Fragment() {
+class SignUpFragment : Fragment() {
 
     private var loginTextView: EditText? = null
     private var passwordTextView: EditText? = null
@@ -27,7 +27,7 @@ class RegisterFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? =
-            inflater!!.inflate(R.layout.fragment_register, container, false)
+            inflater!!.inflate(R.layout.fragment_signup, container, false)
 
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -35,14 +35,14 @@ class RegisterFragment : Fragment() {
         loginTextView = getView()!!.findViewById(R.id.register_login_editTxtView) as EditText
         passwordTextView = getView()!!.findViewById(R.id.register_password_editTxtView) as EditText
         repeatPasswordTextView = getView()!!.findViewById(R.id.repeat_password_editTxtView) as EditText
-        registerButton = getView()!!.findViewById(R.id.register_button) as Button
+        registerButton = getView()!!.findViewById(R.id.signup_button) as Button
 
         registerButton?.setOnClickListener {
             if (checkAllFields()) {
                registerUser(loginTextView?.text.toString().trim(),
                        repeatPasswordTextView?.text.toString().trim())
             } else {
-                Toast.makeText(context, R.string.registration_warning_message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.signup_warning_message, Toast.LENGTH_SHORT).show()
             }
         }
     }
