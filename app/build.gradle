@@ -36,6 +36,7 @@ dependencies {
     compile 'khttp:khttp:0.1.0'
     compile 'com.beust:klaxon:0.30'
     compile 'org.jetbrains.anko:anko-sdk15:0.9.1'
+    compile 'com.android.support:support-v4:25.3.1'
     testCompile 'junit:junit:4.12'
 }
 repositories {

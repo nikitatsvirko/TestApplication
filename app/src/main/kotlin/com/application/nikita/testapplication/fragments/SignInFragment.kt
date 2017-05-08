@@ -3,7 +3,6 @@ package com.application.nikita.testapplication.fragments
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,10 +18,10 @@ import org.jetbrains.anko.uiThread
 
 class SignInFragment : Fragment() {
 
-    private var loginTextView: EditText? = null
-    private var passwordTextView: EditText? = null
-    private var loginButton: Button? = null
-    private var session: SessionManager? =null
+    private var mLoginTextView: EditText? = null
+    private var mPasswordTextView: EditText? = null
+    private var mLoginButton: Button? = null
+    private var mSession: SessionManager? =null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,13 +34,13 @@ class SignInFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loginTextView = getView()!!.findViewById(R.id.login_editTxtView) as EditText
-        passwordTextView = getView()!!.findViewById(R.id.password_editTxtView) as EditText
-        loginButton = getView()!!.findViewById(R.id.login_button) as Button
+        mLoginTextView = getView()!!.findViewById(R.id.login_editTxtView) as EditText
+        mPasswordTextView = getView()!!.findViewById(R.id.password_editTxtView) as EditText
+        mLoginButton = getView()!!.findViewById(R.id.login_button) as Button
 
-        loginButton?.setOnClickListener {
-            val login = loginTextView?.text.toString()
-            val passwrod = passwordTextView?.text.toString()
+        mLoginButton?.setOnClickListener {
+            val login = mLoginTextView?.text.toString()
+            val passwrod = mPasswordTextView?.text.toString()
 
             if (areFieldsCorrect(login, passwrod))
                     makeLogInRequest(login.trim(),
@@ -56,7 +55,6 @@ class SignInFragment : Fragment() {
             val request = post("http://213.184.248.43:9099/api/account/signin", json = postParams)
             val status = request.statusCode
             uiThread {
-                Log.d("FRAGMENT!!!!!", "Status $status")
                 when(status) {
                     200 -> {
                         Toast.makeText(context, R.string.signin_ok_text, Toast.LENGTH_SHORT).show()
@@ -76,8 +74,7 @@ class SignInFragment : Fragment() {
                     || (password.length < 8 || password.length > 500))
 
     private fun setUserLoggedIn() {
-        session = SessionManager(context)
-        session?.setLogin(true)
-        Log.d("Login fragment!!!", "User is logged in: ${session?.isLoggedIn()}")
+        mSession = SessionManager(context)
+        mSession?.setLogin(true)
     }
 }

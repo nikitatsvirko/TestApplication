@@ -16,10 +16,10 @@ import org.jetbrains.anko.uiThread
 
 class SignUpFragment : Fragment() {
 
-    private var loginTextView: EditText? = null
-    private var passwordTextView: EditText? = null
-    private var repeatPasswordTextView: EditText? = null
-    private var registerButton: Button? = null
+    private var mLoginTextView: EditText? = null
+    private var mPasswordTextView: EditText? = null
+    private var mRepeatPasswordTextView: EditText? = null
+    private var mRegisterButton: Button? = null
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,15 +32,15 @@ class SignUpFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loginTextView = getView()!!.findViewById(R.id.register_login_editTxtView) as EditText
-        passwordTextView = getView()!!.findViewById(R.id.register_password_editTxtView) as EditText
-        repeatPasswordTextView = getView()!!.findViewById(R.id.repeat_password_editTxtView) as EditText
-        registerButton = getView()!!.findViewById(R.id.signup_button) as Button
+        mLoginTextView = getView()!!.findViewById(R.id.register_login_editTxtView) as EditText
+        mPasswordTextView = getView()!!.findViewById(R.id.register_password_editTxtView) as EditText
+        mRepeatPasswordTextView = getView()!!.findViewById(R.id.repeat_password_editTxtView) as EditText
+        mRegisterButton = getView()!!.findViewById(R.id.signup_button) as Button
 
-        registerButton?.setOnClickListener {
+        mRegisterButton?.setOnClickListener {
             if (checkAllFields()) {
-               registerUser(loginTextView?.text.toString().trim(),
-                       repeatPasswordTextView?.text.toString().trim())
+               registerUser(mLoginTextView?.text.toString().trim(),
+                       mRepeatPasswordTextView?.text.toString().trim())
             } else {
                 Toast.makeText(context, R.string.signup_warning_message, Toast.LENGTH_SHORT).show()
             }
@@ -70,7 +70,7 @@ class SignUpFragment : Fragment() {
             secondPassword == firstPassword
 
     private fun checkAllFields(): Boolean =
-        areFieldsCorrect(loginTextView?.text.toString(), repeatPasswordTextView?.text.toString())
-                && comparePasswords(passwordTextView?.text.toString(), repeatPasswordTextView?.text.toString())
+        areFieldsCorrect(mLoginTextView?.text.toString(), mRepeatPasswordTextView?.text.toString())
+                && comparePasswords(mPasswordTextView?.text.toString(), mRepeatPasswordTextView?.text.toString())
 
 }

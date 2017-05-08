@@ -1,5 +1,7 @@
 package com.application.nikita.testapplication.activities
 
+import android.app.Fragment
+import android.app.FragmentTransaction
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -13,11 +15,13 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.MenuItem
 import com.application.nikita.testapplication.R
+import com.application.nikita.testapplication.fragments.PhotosFragment
 import com.application.nikita.testapplication.helper.SessionManager
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var session: SessionManager? = null
+    private var fragmentPhotos: PhotosFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +45,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val navigationView = findViewById(R.id.nav_view) as NavigationView
         navigationView.setNavigationItemSelectedListener(this)
+
+        fragmentPhotos = PhotosFragment()
     }
 
     override fun onBackPressed() {
@@ -54,10 +60,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
+        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
 
         when (id ) {
             R.id.nav_photos -> {
-
+                fragmentTransaction.replace(R.id.container, fragmentPhotos)
             }
             R.id.nav_map -> {
 
@@ -70,6 +77,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 finish()
             }
         }
+
 
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         drawer.closeDrawer(GravityCompat.START)
