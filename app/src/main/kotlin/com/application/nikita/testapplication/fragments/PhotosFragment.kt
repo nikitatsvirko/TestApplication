@@ -2,20 +2,21 @@ package com.application.nikita.testapplication.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.application.nikita.testapplication.R
-import com.application.nikita.testapplication.adapters.MyRecyclerViewAdapter
+import com.application.nikita.testapplication.adapters.PhotoAdapter
 import com.application.nikita.testapplication.models.Photo
+import kotlinx.android.synthetic.main.fragment_photos.*
 
 class PhotosFragment: Fragment() {
-    private var mPhotosList: MutableList<Photo>? = null
-    private var mRecyclerView: RecyclerView? = null
-    private var mAdapter: MyRecyclerViewAdapter? = null
+
+    private val TAG = this.tag
+    private var mPhotosList: MutableList<Photo>? = ArrayList()
+    private var mAdapter: PhotoAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,24 +30,17 @@ class PhotosFragment: Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mRecyclerView = getView()!!.findViewById(R.id.recycler_view) as RecyclerView?
+        mPhotosList!!.add(0, Photo(24101996, 45, "52.025541", ",29.235373", "http://i.imgur.com/DvpvklR.png"))
+        mPhotosList!!.add(1, Photo(25101996, 46, "52.025541", ",29.235373", "http://i.imgur.com/DvpvklR.png"))
+        mPhotosList!!.add(2, Photo(26101996, 47, "52.025541", ",29.235373", "http://i.imgur.com/DvpvklR.png"))
+        mPhotosList!!.add(3, Photo(27101996, 48, "52.025541", ",29.235373", "http://i.imgur.com/DvpvklR.png"))
+        mPhotosList!!.add(4, Photo(28101996, 49, "52.025541", ",29.235373", "http://i.imgur.com/DvpvklR.png"))
+        mPhotosList!!.add(5, Photo(29101996, 50, "52.025541", ",29.235373", "http://i.imgur.com/DvpvklR.png"))
 
-        mAdapter = MyRecyclerViewAdapter(mPhotosList!!, context)
-        val mLayoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context)
-        mRecyclerView?.setLayoutManager(mLayoutManager)
-        mRecyclerView?.setItemAnimator(DefaultItemAnimator())
-        mRecyclerView?.setAdapter(mAdapter)
-
-        prepareData()
-    }
-
-    private fun prepareData() {
-
-        var i: Int = 0
-        while (i in 0..10) {
-            mPhotosList!!.add(i, Photo(24101996, 45, "52.025541", ",29.235373", "https://static.panoramio.com.storage.googleapis.com/photos/large/76983180.jpg"))
-        }
-
-        mAdapter?.notifyDataSetChanged()
+        mAdapter = PhotoAdapter(mPhotosList!!)
+        val mLayoutManager: RecyclerView.LayoutManager = GridLayoutManager(activity, 3)
+        recycler_view.setHasFixedSize(false)
+        recycler_view.layoutManager = mLayoutManager
+        recycler_view.adapter = mAdapter
     }
 }

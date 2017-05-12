@@ -1,25 +1,22 @@
 package com.application.nikita.testapplication.fragments
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import com.application.nikita.testapplication.R
 import khttp.post
+import kotlinx.android.synthetic.main.fragment_signup.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
 class SignUpFragment : Fragment() {
 
-    private var mLoginTextView: EditText? = null
-    private var mPasswordTextView: EditText? = null
-    private var mRepeatPasswordTextView: EditText? = null
-    private var mRegisterButton: Button? = null
+    private val TAG = this.tag
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,17 +29,15 @@ class SignUpFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mLoginTextView = getView()!!.findViewById(R.id.register_login_editTxtView) as EditText
-        mPasswordTextView = getView()!!.findViewById(R.id.register_password_editTxtView) as EditText
-        mRepeatPasswordTextView = getView()!!.findViewById(R.id.repeat_password_editTxtView) as EditText
-        mRegisterButton = getView()!!.findViewById(R.id.signup_button) as Button
 
-        mRegisterButton?.setOnClickListener {
+        signup_button.setOnClickListener { view ->
+            val login = register_login_editTxtView.text.toString()
+            val repeatPassword = repeat_password_editTxtView.text.toString()
             if (checkAllFields()) {
-               registerUser(mLoginTextView?.text.toString().trim(),
-                       mRepeatPasswordTextView?.text.toString().trim())
+               registerUser(login.trim(), repeatPassword.trim())
             } else {
-                Toast.makeText(context, R.string.signup_warning_message, Toast.LENGTH_SHORT).show()
+                Snackbar.make(view, R.string.signup_warning_message, Snackbar.LENGTH_SHORT)
+                        .setAction("Action", null).show()
             }
         }
     }
@@ -53,7 +48,7 @@ class SignUpFragment : Fragment() {
             val request = post("http://213.184.248.43:9099/api/account/signup", json = postParams)
             val status = request.statusCode
             uiThread {
-                Log.d("FRAGMENT!!!!!", "Status $status")
+                Log.d(TAG, "Status $status")
                 when(status) {
                     200 -> Toast.makeText(context, R.string.confirm_text, Toast.LENGTH_SHORT).show()
                     400 -> Toast.makeText(context, R.string.denied_text, Toast.LENGTH_SHORT).show()
@@ -69,8 +64,11 @@ class SignUpFragment : Fragment() {
     private fun comparePasswords(firstPassword: String, secondPassword: String): Boolean =
             secondPassword == firstPassword
 
-    private fun checkAllFields(): Boolean =
-        areFieldsCorrect(mLoginTextView?.text.toString(), mRepeatPasswordTextView?.text.toString())
-                && comparePasswords(mPasswordTextView?.text.toString(), mRepeatPasswordTextView?.text.toString())
+    private fun checkAllFields(): Boolean {
+        val login = register_login_editTxtView.text.toString()
+        val password = register_password_editTxtView.text.toString()
+        val repeatPassword = repeat_password_editTxtView.text.toString()
 
+        return areFieldsCorrect(login, repeatPassword) && comparePasswords(password, repeatPassword)
+    }
 }

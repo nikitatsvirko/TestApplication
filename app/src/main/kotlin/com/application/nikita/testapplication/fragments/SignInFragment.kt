@@ -2,25 +2,23 @@ package com.application.nikita.testapplication.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import com.application.nikita.testapplication.R
 import com.application.nikita.testapplication.activities.MainActivity
 import com.application.nikita.testapplication.helper.SessionManager
 import khttp.post
+import kotlinx.android.synthetic.main.fragment_login.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
 class SignInFragment : Fragment() {
 
-    private var mLoginTextView: EditText? = null
-    private var mPasswordTextView: EditText? = null
-    private var mLoginButton: Button? = null
+    private val TAG = this.tag
     private var mSession: SessionManager? =null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,23 +26,22 @@ class SignInFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_login, container, false)
-    }
+                              savedInstanceState: Bundle?): View? =
+        inflater!!.inflate(R.layout.fragment_login, container, false)
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mLoginTextView = getView()!!.findViewById(R.id.login_editTxtView) as EditText
-        mPasswordTextView = getView()!!.findViewById(R.id.password_editTxtView) as EditText
-        mLoginButton = getView()!!.findViewById(R.id.login_button) as Button
+        login_button.setOnClickListener { view ->
+            val login = login_editTxtView.text.toString()
+            val password = password_editTxtView.text.toString()
 
-        mLoginButton?.setOnClickListener {
-            val login = mLoginTextView?.text.toString()
-            val passwrod = mPasswordTextView?.text.toString()
-
-            if (areFieldsCorrect(login, passwrod))
-                    makeLogInRequest(login.trim(),
-                            passwrod.trim())
+            if (areFieldsCorrect(login, password)) {
+                makeLogInRequest(login.trim(),
+                        password.trim())
+            } else {
+                Snackbar.make(view, R.string.signup_warning_message, Snackbar.LENGTH_SHORT)
+                        .setAction("Action", null).show()
+            }
 
         }
     }
@@ -59,6 +56,11 @@ class SignInFragment : Fragment() {
                     200 -> {
                         Toast.makeText(context, R.string.signin_ok_text, Toast.LENGTH_SHORT).show()
                         setUserLoggedIn()
+                        /*Log.d(TAG, "Username: ${request.jsonObject.getJSONObject("data").get("login")} " +
+                                "Token: ${request.jsonObject.getJSONObject("data").get("token")} " +
+                                "UserID: ${request.jsonObject.getJSONObject("data").get("userId")}")
+                        saveUserToDataBase(request.jsonObject.getJSONObject("data"))
+                        */
                         val intent = Intent(activity, MainActivity::class.java)
                         startActivity(intent)
                         activity.finish()
@@ -68,6 +70,12 @@ class SignInFragment : Fragment() {
             }
         }
     }
+
+   /* private fun  saveUserToDataBase(jsonObject: JSONObject) {
+        val id = jsonObject.get("id")
+        val username = jsonObject.get("username")
+        val token = jsonObject.get("token")
+    }*/
 
     private fun areFieldsCorrect(login: String, password: String): Boolean =
             !((login.length < 4 || login.length > 32) && !login.contains("[a-z0-9_-]+")

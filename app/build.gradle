@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
 
 android {
     compileSdkVersion 25
@@ -37,6 +39,7 @@ dependencies {
     compile 'com.beust:klaxon:0.30'
     compile 'org.jetbrains.anko:anko-sdk15:0.9.1'
     compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
     testCompile 'junit:junit:4.12'
 }
 repositories {
