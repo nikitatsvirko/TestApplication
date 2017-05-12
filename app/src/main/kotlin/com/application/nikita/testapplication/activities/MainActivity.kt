@@ -15,6 +15,8 @@ import android.view.MenuItem
 import com.application.nikita.testapplication.R
 import com.application.nikita.testapplication.fragments.PhotosFragment
 import com.application.nikita.testapplication.helper.SessionManager
+import com.application.nikita.testapplication.models.User
+import com.application.nikita.testapplication.models.UserDao
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -22,6 +24,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private var session: SessionManager? = null
     private var fragmentPhotos: PhotosFragment? = null
+    lateinit private var mUserDao: UserDao
+    lateinit private var mUser: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +33,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         session = SessionManager(applicationContext)
+        mUserDao = UserDao()
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -71,7 +76,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_exit -> {
                 session?.setLogin(false)
-                Log.d("Main Activity", "USer logged in: ${session?.isLoggedIn()}")
+                deleteUserFromDataBase()
+                Log.d("Main Activity", "User logged in: ${session?.isLoggedIn()}")
                 val intent = Intent(applicationContext, StartActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -82,5 +88,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         drawer.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun deleteUserFromDataBase() {
+        mUser = mUserDao.loadUser()[0]
+        Log.d("USER IN DB BEF DEL", mUser.getInfo())
+        mUserDao.deleteUser(mUser)
+        mUserDao.deleteAllUsers()
+        Log.d("USER IN DB AFT DEL", mUser.getInfo())
     }
 }
