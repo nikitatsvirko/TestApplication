@@ -55,8 +55,8 @@ class SignInFragment : Fragment() {
     }
 
     private fun makeLogInRequest(login: String, password: String) {
+        val postParams = mapOf("login" to login, "password" to password)
         doAsync {
-            val postParams = mapOf("login" to login, "password" to password)
             val request = post("http://213.184.248.43:9099/api/account/signin", json = postParams)
             val status = request.statusCode
             uiThread {

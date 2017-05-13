@@ -7,13 +7,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.application.nikita.testapplication.R
-import com.application.nikita.testapplication.models.Photo
+import com.application.nikita.testapplication.models.PhotoData
 import com.squareup.picasso.Picasso
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.imageBitmap
 
 
-class PhotoAdapter(var mPhotoList: List<Photo> ) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>() {
+class PhotoAdapter(var mPhotoList: List<PhotoData> ) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>() {
 
     override fun getItemCount(): Int = mPhotoList.size
 
@@ -27,7 +27,7 @@ class PhotoAdapter(var mPhotoList: List<Photo> ) : RecyclerView.Adapter<PhotoAda
         doAsync {
             holder?.mPhotoImage?.imageBitmap = Picasso.with(holder?.itemView?.context).load(photo.url).get()
         }
-        holder?.mPhotoDate?.text = photo.date.toString()
+        holder?.mPhotoDate?.text = java.text.SimpleDateFormat("dd.MM.yyyy").format(java.util.Date((photo.date * 1000).toLong()))
     }
 
     class ViewHolder : RecyclerView.ViewHolder {
