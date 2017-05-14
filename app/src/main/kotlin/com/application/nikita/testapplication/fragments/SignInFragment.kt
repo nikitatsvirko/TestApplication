@@ -85,7 +85,7 @@ class SignInFragment : Fragment() {
         mUser.token = token
         mUser.userId = userId
         mUserDao.saveUser(mUser)
-        Log.d("USER IN DATABASE", mUser.getInfo())
+        Log.d(TAG, mUser.getInfo())
     }
 
     private fun areFieldsCorrect(login: String, password: String): Boolean =

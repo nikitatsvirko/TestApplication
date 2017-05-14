@@ -21,7 +21,6 @@ import com.application.nikita.testapplication.helper.GPSTracker
 import com.application.nikita.testapplication.helper.SessionManager
 import com.application.nikita.testapplication.models.User
 import com.application.nikita.testapplication.models.UserDao
-import khttp.get
 import khttp.post
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -37,7 +36,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var REQUEST_IMAGE_CAPTURE = 1
     private var latitude: Int = 0
     private var longitude: Int = 0
-    private var date: Int = 0
+    private var date: Long = 0
     lateinit private var mUserDao: UserDao
     lateinit private var mUser: User
 
@@ -87,7 +86,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setDate() {
-        date = (System.currentTimeMillis() / 1000).toInt()
+        date = System.currentTimeMillis() / 1000
     }
 
     private fun setLatAndLng() {
@@ -128,7 +127,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 fragTrans.replace(R.id.container, fragmentPhotos)
             }
             R.id.nav_map -> {
-                testFun()
+
             }
             R.id.nav_exit -> {
                 session?.setLogin(false)
@@ -154,7 +153,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         Log.d("USER IN DB AFT DEL", mUser.getInfo())
     }
 
-    private fun sendImage(encodedImage: String, date: Int ,latitude: Int, longitude: Int) {
+    private fun sendImage(encodedImage: String, date: Long ,latitude: Int, longitude: Int) {
         mUser = mUserDao.loadUser()[0]
         val header = mapOf("Access-Token" to mUser.token!!)
         val postParams = mapOf("base64Image" to encodedImage, "date" to date,
@@ -173,17 +172,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     400 -> toast("Error!")
                     500 -> toast("File upload error!")
                 }
-            }
-        }
-    }
-
-    private fun testFun() {
-        mUser = mUserDao.loadUser()[0]
-        val header = mapOf("Access-Token" to mUser.token!!)
-        doAsync {
-            val request = get("http://213.184.248.43:9099/api/image?page=0", headers = header)
-            uiThread {
-                toast("${request.jsonObject}")
             }
         }
     }
