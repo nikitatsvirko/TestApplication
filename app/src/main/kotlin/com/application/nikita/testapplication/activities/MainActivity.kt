@@ -15,7 +15,9 @@ import android.support.v7.widget.Toolbar
 import android.util.Base64
 import android.util.Log
 import android.view.MenuItem
+import android.widget.TextView
 import com.application.nikita.testapplication.R
+import com.application.nikita.testapplication.fragments.MapFragment
 import com.application.nikita.testapplication.fragments.PhotosFragment
 import com.application.nikita.testapplication.helper.GPSTracker
 import com.application.nikita.testapplication.helper.SessionManager
@@ -33,9 +35,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private var session: SessionManager? = null
     private var fragmentPhotos: PhotosFragment? = null
+    private var fragmentMap: MapFragment? = null
     private var REQUEST_IMAGE_CAPTURE = 1
-    private var latitude: Int = 0
-    private var longitude: Int = 0
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
     private var date: Long = 0
     lateinit private var mUserDao: UserDao
     lateinit private var mUser: User
@@ -47,7 +50,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
         session = SessionManager(applicationContext)
         mUserDao = UserDao()
-
+        mUser = mUserDao.loadUser()[0]
         fab.setOnClickListener {
             takePictureIntent()
         }
@@ -59,11 +62,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+        val header = nav_view.getHeaderView(0)
+        val username = header.findViewById(R.id.username) as TextView
+        username.text = mUser.login
+
         fragmentPhotos = PhotosFragment()
+        fragmentMap = MapFragment()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.container, fragmentPhotos)
         fragmentTransaction.commit()
-        nav_view.menu.getItem(0).isChecked = true
     }
 
     private fun takePictureIntent() {
@@ -75,6 +82,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         setLatAndLng()
         setDate()
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
@@ -83,6 +91,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val encodedImage = encodeImageToBase(imageBitmap)
             sendImage(encodedImage, date, latitude, longitude)
         }
+
     }
 
     private fun setDate() {
@@ -92,9 +101,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun setLatAndLng() {
         val gps = GPSTracker(this)
         if (gps.canGetLocation()) {
-            latitude = gps.getLatitude().toInt()
-            longitude = gps.getLongitude().toInt()
-        } else {
+                latitude = gps.getLatitude()
+                longitude = gps.getLongitude()
+            } else {
             gps.showSettingsAlert()
         }
         gps.stopUsingGPS()
@@ -121,13 +130,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         val fragTrans: FragmentTransaction = supportFragmentManager.beginTransaction()
+        var title: String = ""
 
         when (id ) {
             R.id.nav_photos -> {
                 fragTrans.replace(R.id.container, fragmentPhotos)
+                title = "Photos"
             }
             R.id.nav_map -> {
-
+                fragTrans.replace(R.id.container, fragmentMap)
+                title = "Map"
             }
             R.id.nav_exit -> {
                 session?.setLogin(false)
@@ -140,20 +152,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         fragTrans.commit()
 
+        if (actionBar != null) {
+            actionBar.title = title
+        }
+
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         drawer.closeDrawer(GravityCompat.START)
         return true
     }
 
     private fun deleteUserFromDataBase() {
-        mUser = mUserDao.loadUser()[0]
         Log.d("USER IN DB BEF DEL", mUser.getInfo())
         mUserDao.deleteUser(mUser)
         mUserDao.deleteAllUsers()
         Log.d("USER IN DB AFT DEL", mUser.getInfo())
     }
 
-    private fun sendImage(encodedImage: String, date: Long ,latitude: Int, longitude: Int) {
+    private fun sendImage(encodedImage: String, date: Long ,latitude: Double, longitude: Double) {
         mUser = mUserDao.loadUser()[0]
         val header = mapOf("Access-Token" to mUser.token!!)
         val postParams = mapOf("base64Image" to encodedImage, "date" to date,

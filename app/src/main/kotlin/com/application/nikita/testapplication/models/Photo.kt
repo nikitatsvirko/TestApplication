@@ -4,7 +4,7 @@ import com.activeandroid.Model
 import com.activeandroid.annotation.Column
 import com.activeandroid.annotation.Table
 
-@Table(name = "Photos", id = "_id")
+@Table(name = "Photo", id = "_id")
 class Photo: Model {
 
     @Column(name = "date")
@@ -17,7 +17,6 @@ class Photo: Model {
     var lng: String? = null
     @Column(name = "url")
     var url: String? = null
-
 
     constructor(date: Long, id: Int, lat: String, lng: String, url: String) {
         this.date = date
