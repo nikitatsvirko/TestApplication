@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class PhotoAdapter(var mPhotoList: List<Photo> ) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>() {
+class PhotoAdapter(var mPhotoList: List<Photo>) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>() {
 
     override fun getItemCount(): Int = mPhotoList.size
 
